@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}User list{% endblock %}
+
+{% block content %}
+  {% if users_list %}
+    {% for a in users_list %}
+      <a href="{% url 'library:user_books' a.id %}">{{a.user_name}}</a>
+    {% endfor %}
+  {% else %}
+    No users found
+  {% endif %}
+  <form action="{% url 'library:add' %}" method ="POST">
+
+    {% csrf_token %}
+
+    <input type="text" required placeholder="Name" name = "name"><br>
+    <button type="submit">New user</button>
+  </form>
+{% endblock %}
