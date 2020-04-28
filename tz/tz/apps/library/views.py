@@ -1,7 +1,9 @@
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import render
 from django.urls import reverse
 from .models import Book, User
+from django.shortcuts import render
+from rest_framework import generics
+from .serializers import UserDetailSerializer, UserListSerializer, BookDetailSerializer, BookListSerializer
 
 
 def index(request):
@@ -53,3 +55,32 @@ def delete_book(request, book_id):
     user = (Book.objects.get(id = book_id)).user_id
     Book.objects.filter(id = book_id).delete()
     return HttpResponseRedirect(reverse('library:user_books', args = (user.id,)))
+
+
+
+class UserCreateView(generics.CreateAPIView):
+    serializer_class = UserDetailSerializer
+
+
+
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = UserDetailSerializer
+    queryset = User.objects.all()
+
+class UserListView(generics.ListAPIView):
+    serializer_class = UserListSerializer
+    queryset = User.objects.all()
+
+
+class BookCreateView(generics.CreateAPIView):
+    serializer_class = BookDetailSerializer
+
+
+class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = BookDetailSerializer
+    queryset = User.objects.all()
+
+
+class BookListView(generics.ListAPIView):
+    serializer_class = BookListSerializer
+    queryset = User.objects.all()
