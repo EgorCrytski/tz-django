@@ -10,7 +10,7 @@
   {% else %}
     No users found
   {% endif %}
-  <form action="{% url 'library:add' %}" method ="POST">
+  <form action="{% url 'library:add_user' %}" method ="POST">
 
     {% csrf_token %}
 
