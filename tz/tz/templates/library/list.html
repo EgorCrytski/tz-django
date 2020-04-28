@@ -5,7 +5,7 @@
 {% block content %}
   {% if users_list %}
     {% for a in users_list %}
-      <a href="{% url 'library:user_books' a.id %}">{{a.user_name}}</a>
+      <a href="{% url 'library:user_books' a.id %}">{{a.user_name}}<br></a>
     {% endfor %}
   {% else %}
     No users found

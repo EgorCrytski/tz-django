@@ -1,20 +1,21 @@
 {% extends 'base.html' %}
 
-{% block title %}User list{% endblock %}
+{% block title %}Book {{book.book_name}}{% endblock %}
 
 {% block content %}
-  {% if users_list %}
-    {% for a in users_list %}
-      <a href="{% url 'library:user_books' a.id %}">{{a.user_name}}</a>
-    {% endfor %}
-  {% else %}
-    No users found
-  {% endif %}
-  <form action="{% url 'library:add_user' %}" method ="POST">
+  <b>Book name: {{book.book_name}}</b><br>
+  <b>Book author: {{book.book_author}}</b><br>
+  <b>Publishing date: {{book.book_year}}</b><br>
 
+  <form action="{% url 'library:change_book' book.id %}" method ="POST">
     {% csrf_token %}
-
-    <input type="text" required placeholder="Name" name = "name"><br>
-    <button type="submit">New user</button>
+    <input type="text" required placeholder="Name" name = "book_name"><br>
+    <input type="text" required placeholder="Author" name = "book_author"><br>
+    <input type="date" required placeholder="Date" name = "book_year"><br>
+    <button type="submit">Change book description</button><br>
+  </form>
+  <form action="{% url 'library:delete_book' book.id %}" method ="POST">
+    {% csrf_token %}
+    <button type="submit">Delete book</button>
   </form>
 {% endblock %}

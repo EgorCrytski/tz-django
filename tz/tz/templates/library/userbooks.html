@@ -5,7 +5,7 @@
 {% block content %}
   {% if books %}
     {% for a in books %}
-      <a href="{% url 'library:book' a.id %}">{{a.book_name}}</a>
+      <a href="{% url 'library:book' a.id %}">{{a.book_name}}<br></a>
     {% endfor %}
   {% else %}
     No books found
