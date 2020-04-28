@@ -13,7 +13,7 @@ def index(request):
 
 def user_books(request, user_id):
     try:
-        user = User.objects.get(id = user_id)
+        user = User.objects.get(id=user_id)
         book_list = Book.objects.filter(user_id=user_id)
     except:
         raise Http404("User not found")
@@ -27,7 +27,7 @@ def book(request, book_id):
     except:
         raise Http404("Book not found")
 
-    return render(request,'library/book.html', {'book': book})
+    return render(request, 'library/book.html', {'book': book})
 
 
 def add_user(request):
@@ -38,24 +38,23 @@ def add_user(request):
 
 def add_book(request):
     user = User.objects.get(id=request.POST['userid'])
-    a = Book(book_name=request.POST['book_name'], book_author = request.POST['book_author'],
-             book_year = request.POST['book_year'], user_id = user)
+    a = Book(book_name=request.POST['book_name'], book_author=request.POST['book_author'],
+             book_year=request.POST['book_year'], user_id=user)
     a.save()
-    return HttpResponseRedirect(reverse('library:user_books', args = (user.id,)))
+    return HttpResponseRedirect(reverse('library:user_books', args=(user.id,)))
 
 
 def change_book(request, book_id):
-    book = Book(book_name=request.POST['book_name'], book_author = request.POST['book_author'],
-                book_year = request.POST['book_year'], id = book_id)
+    book = Book(book_name=request.POST['book_name'], book_author=request.POST['book_author'],
+                book_year=request.POST['book_year'], id=book_id)
     book.save()
-    return HttpResponseRedirect(reverse('library:book', args = (book_id,)))
+    return HttpResponseRedirect(reverse('library:book', args=(book_id,)))
 
 
 def delete_book(request, book_id):
-    user = (Book.objects.get(id = book_id)).user_id
-    Book.objects.filter(id = book_id).delete()
-    return HttpResponseRedirect(reverse('library:user_books', args = (user.id,)))
-
+    user = (Book.objects.get(id=book_id)).user_id
+    Book.objects.filter(id=book_id).delete()
+    return HttpResponseRedirect(reverse('library:user_books', args=(user.id,)))
 
 
 class UserCreateView(generics.CreateAPIView):

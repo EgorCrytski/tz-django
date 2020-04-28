@@ -17,5 +17,4 @@ urlpatterns = [
     path('api/book/detail/<int:pk>/', views.BookDetailView.as_view()),
     path('api/book/all', views.BookListView.as_view()),
 
-
 ]
