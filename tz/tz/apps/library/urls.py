@@ -10,11 +10,4 @@ urlpatterns = [
     path('book/add/', views.add_book, name='add_book'),
     path('book/change/<int:book_id>', views.change_book, name='change_book'),
     path('book/delete/<int:book_id>', views.delete_book, name='delete_book'),
-    path('api/user', views.UserCreateView.as_view()),
-    path('api/user/detail/<int:pk>/', views.UserDetailView.as_view()),
-    path('api/user/all', views.UserListView.as_view()),
-    path('api/book', views.BookCreateView.as_view()),
-    path('api/book/detail/<int:pk>/', views.BookDetailView.as_view()),
-    path('api/book/all', views.BookListView.as_view()),
-
 ]
