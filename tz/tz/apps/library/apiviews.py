@@ -9,6 +9,7 @@ class UserCreateView(generics.CreateAPIView):
 
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserDetailSerializer
+    lookup_field = 'pk'
     queryset = User.objects.all()
 
 
@@ -23,6 +24,7 @@ class BookCreateView(generics.CreateAPIView):
 
 class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BookDetailSerializer
+    lookup_field = 'pk'
     queryset = Book.objects.all()
 
 
