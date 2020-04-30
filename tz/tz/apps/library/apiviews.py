@@ -2,7 +2,7 @@ from .models import Book, User
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import UserDetailSerializer, UserListSerializer, BookDetailSerializer, BookListSerializer, \
-    BookCreateSerializer, UserCreateSerializer, UserEditSerializer
+    BookCreateSerializer, UserCreateSerializer, UserEditSerializer, BookEditSerializer
 
 
 class UserListView(APIView):
@@ -30,18 +30,28 @@ class UserCreateView(APIView):
         user = UserCreateSerializer(data=request.data)
         if user.is_valid():
             user.save()
-        return Response(status=201)
+            return Response(status=201)
+        else:
+            return Response(status=400)
+
 
 class UserEditView(APIView):
     def put(self, request, pk):
         user = User.objects.get(id=pk)
-        serializer = UserEditSerializer(user, data =request.data)
+        serializer = UserEditSerializer(user, data=request.data)
 
         if serializer.is_valid():
             serializer.save()
-            return Response(status = 202)
+            return Response(status=202)
         else:
             return Response(status=400)
+
+
+class UserDeleteView(APIView):
+    def post(self, request, pk):
+        user = User.objects.get(id=pk)
+        user.delete()
+        return Response(status=202)
 
 
 class BookListView(APIView):
@@ -63,12 +73,34 @@ class BookDetailView(APIView):
         serializer = BookDetailSerializer(book)
         return Response(serializer.data)
 
+
 class BookCreateView(APIView):
     def post(self, request):
         book = BookCreateSerializer(data=request.data)
         if book.is_valid():
             book.save()
-        return Response(status=201)
+            return Response(status=201)
+        else:
+            return Response(status=400)
+
+
+class BookEditView(APIView):
+    def put(self, request, pk):
+        book = Book.objects.get(id=pk)
+        serializer = BookEditSerializer(book, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=202)
+        else:
+            return Response(status=400)
+
+
+class BookDeleteView(APIView):
+    def post(self, request, pk):
+        book = Book.objects.get(id=pk)
+        book.delete()
+        return Response(status=202)
 
 
 """

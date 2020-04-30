@@ -37,19 +37,19 @@ def add_user(request):
 def add_book(request):
     user = User.objects.get(id=request.POST['userid'])
     a = Book(book_name=request.POST['book_name'], book_author=request.POST['book_author'],
-             book_year=request.POST['book_year'], user_id=user)
+             book_year=request.POST['book_year'], user=user)
     a.save()
     return HttpResponseRedirect(reverse('library:user_books', args=(user.id,)))
 
 
 def change_book(request, book_id):
     book = Book(book_name=request.POST['book_name'], book_author=request.POST['book_author'],
-                book_year=request.POST['book_year'], id=book_id)
+                book_year=request.POST['book_year'], user=book_id)
     book.save()
     return HttpResponseRedirect(reverse('library:book', args=(book_id,)))
 
 
 def delete_book(request, book_id):
-    user = (Book.objects.get(id=book_id)).user_id
+    user = (Book.objects.get(id=book_id)).user
     Book.objects.filter(id=book_id).delete()
     return HttpResponseRedirect(reverse('library:user_books', args=(user.id,)))

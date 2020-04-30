@@ -2,8 +2,6 @@ from rest_framework import serializers
 from .models import User, Book
 
 
-
-
 class UserEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -19,11 +17,10 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("user_name",)
+        fields = '__all__'
 
 
 class BookDetailSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Book
         fields = '__all__'
@@ -32,7 +29,13 @@ class BookDetailSerializer(serializers.ModelSerializer):
 class BookChangeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        exclude = ("id", "user_id")
+        exclude = ("id", "user_id",)
+
+
+class BookEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        exclude = ("id", "user",)
 
 
 class BookCreateSerializer(serializers.ModelSerializer):
@@ -41,14 +44,15 @@ class BookCreateSerializer(serializers.ModelSerializer):
         exclude = ("id",)
 
 
-
 class BookListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        exclude = ("id",)
+        fields = '__all__'
+
 
 class UserDetailSerializer(serializers.ModelSerializer):
-    books = BookDetailSerializer(many = True)
+    books = BookDetailSerializer(many=True)
+
     class Meta:
         model = User
         fields = '__all__'
