@@ -4,14 +4,22 @@
 * 'host:port/api/v1/library'
 
 ### api paths:
-* '/user/detail/<int>'
-  > Удаление, изменение юзера
+* '/user/<int>/detail/'
+  > Просмотр юзера
+* '/user/<int>/edit/'
+  > Изменение юзера
+* '/user/<int>/delete/'
+  > Удаление юзера
 * '/user/all'
   > Список всех юзеров
 * '/user/add'
   > Добавляет нового юзера
-* '/book/detail/<int>'
-  > Удаление, изменение книги
+* '/book/<int>/detail'
+  > Просомтр книги
+* '/book/<int>/edit'
+  > Изменение книги
+* '/book/<int>/delete'
+  > Удаление книги
 * '/book/all'
   > Список всех книг
 * '/book/add'
