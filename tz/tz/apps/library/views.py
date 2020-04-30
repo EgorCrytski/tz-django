@@ -43,9 +43,10 @@ def add_book(request):
 
 
 def change_book(request, book_id):
-    book = Book(book_name=request.POST['book_name'], book_author=request.POST['book_author'],
-                book_year=request.POST['book_year'], user=book_id)
-    book.save()
+    Book.objects.filter(id=book_id).update(book_name=request.POST['book_name'],
+                                           book_author=request.POST['book_author'],
+                                           book_year=request.POST['book_year'])
+
     return HttpResponseRedirect(reverse('library:book', args=(book_id,)))
 
 

@@ -26,12 +26,6 @@ class BookDetailSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class BookChangeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Book
-        exclude = ("id", "user_id",)
-
-
 class BookEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
