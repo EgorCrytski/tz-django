@@ -4,21 +4,21 @@
 * 'host:port/api/v1/library'
 
 ### api paths:
-* '/user/<int>/detail/'
+* '/user/\<int\>/detail/'
   > Просмотр юзера
-* '/user/<int>/edit/'
+* '/user/\<int\>/edit/'
   > Изменение юзера
-* '/user/<int>/delete/'
+* '/user/\<int\>/delete/'
   > Удаление юзера
 * '/user/all'
   > Список всех юзеров
 * '/user/add'
   > Добавляет нового юзера
-* '/book/<int>/detail'
+* '/book/\<int\>/detail'
   > Просомтр книги
-* '/book/<int>/edit'
+* '/book/\<int\>/edit'
   > Изменение книги
-* '/book/<int>/delete'
+* '/book/\<int\>/delete'
   > Удаление книги
 * '/book/all'
   > Список всех книг
@@ -31,15 +31,15 @@
 ### library app paths:
 * ' '
   > Выводит список юзеров
-* 'user/<user id>'
+* 'user/\<user id\>'
   > Выводит список книг конкретного юзера
 * 'user/add'
   > Добавляет нового юзера
-* 'book/<book id>'
+* 'book/\<int\>'
   > Выводит информацию о книге
 * 'book/add'
   > Добавляет новую книгу текущему пользователю
-* 'book/change/<book id>'
+* 'book/\<int\>/change/'
   > Изменяет информацию о книге
-* 'book/delete/<book id>'
+* 'book/\<int\>/delete\'
   > Удаляет книгу
