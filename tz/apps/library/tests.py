@@ -26,7 +26,7 @@ class TestLibraryUserAdd(APITestCase):
         self.url = reverse('library:api_user_add')
         self.view = views.user_create_view.as_view()
 
-    def test_GetAddUser(self):
+    def test_get_add_user(self):
         request = self.factory.get(self.url)
         response = self.view(request)
         print('\n' + request.build_absolute_uri())
@@ -34,7 +34,7 @@ class TestLibraryUserAdd(APITestCase):
                          'Expected Response Code 405, received {0} instead.'
                          .format(response.status_code))
 
-    def test_AddUser(self):
+    def test_add_user(self):
         request = self.factory.post(self.url, {"user_name": "TestUser"}, format='json')
         response = self.view(request)
         print('\n' + request.build_absolute_uri())
@@ -42,7 +42,7 @@ class TestLibraryUserAdd(APITestCase):
                          'Expected Response Code 201, received {0} instead.'
                          .format(response.status_code))
 
-    def test_AddEmptyUser(self):
+    def test_add_empty_user(self):
         request = self.factory.post(self.url, {"user_name": ""}, format='json')
         response = self.view(request)
         print('\n' + request.build_absolute_uri())
@@ -57,11 +57,11 @@ class TestLibraryUserDetail(APITestCase):
         self.factory = APIRequestFactory()
         self.view = views.user_detail_view.as_view()
 
-    def test_UserDetail(self):
-        self.url = reverse('library:api_user_detail', kwargs={'pk': self.user.id})
-        request = self.factory.get(self.url, pk=self.user.id)
+    def test_user_detail(self):
+        self.url = reverse('library:api_user_detail', kwargs={'uid': self.user.id})
+        request = self.factory.get(self.url, uid=self.user.id)
         print('\n' + request.build_absolute_uri())
-        response = self.view(request, pk=self.user.id)
+        response = self.view(request, uid=self.user.id)
         self.assertEqual(response.status_code, 200,
                          'Expected Response Code 200, received {0} instead.'
                          .format(response.status_code))
@@ -73,13 +73,13 @@ class TestLibraryUserEdit(APITestCase):
         self.factory = APIRequestFactory()
         self.view = views.user_edit_view.as_view()
 
-    def test_UserEdit(self):
-        self.url = reverse('library:api_user_edit', kwargs={'pk': self.user.id})
-        request = self.factory.put(self.url, data={"user_name": "Mark"}, pk=self.user.id)
+    def test_user_edit(self):
+        self.url = reverse('library:api_user_edit', kwargs={'uid': self.user.id})
+        request = self.factory.put(self.url, data={"user_name": "Mark"}, uid=self.user.id)
         print('\n' + request.build_absolute_uri())
-        response = self.view(request, pk=self.user.id)
-        self.assertEqual(response.status_code, 202,
-                         'Expected Response Code 202, received {0} instead.'
+        response = self.view(request, uid=self.user.id)
+        self.assertEqual(response.status_code, 200,
+                         'Expected Response Code 200, received {0} instead.'
                          .format(response.status_code))
 
 
@@ -89,13 +89,13 @@ class TestLibraryUserDelete(APITestCase):
         self.factory = APIRequestFactory()
         self.view = views.user_delete_view.as_view()
 
-    def test_UserDelete(self):
-        self.url = reverse('library:api_user_delete', kwargs={'pk': self.user.id})
-        request = self.factory.post(self.url, pk=self.user.id)
+    def test_user_delete(self):
+        self.url = reverse('library:api_user_delete', kwargs={'uid': self.user.id})
+        request = self.factory.post(self.url, uid=self.user.id)
         print('\n' + request.build_absolute_uri())
-        response = self.view(request, pk=self.user.id)
-        self.assertEqual(response.status_code, 202,
-                         'Expected Response Code 202, received {0} instead.'
+        response = self.view(request, uid=self.user.id)
+        self.assertEqual(response.status_code, 200,
+                         'Expected Response Code 200, received {0} instead.'
                          .format(response.status_code))
 
 
@@ -105,7 +105,7 @@ class TestLibraryBookList(APITestCase):
         self.url = reverse('library:api_book_list')
         self.view = views.book_list_view.as_view()
 
-    def test_GetBookList(self):
+    def test_get_book_list(self):
         request = self.factory.get(self.url)
         response = self.view(request)
         print('\n' + request.build_absolute_uri())
@@ -118,10 +118,10 @@ class TestLibraryBookAdd(APITestCase):
     def setUp(self):
         self.user = User.objects.create(user_name='John')
         self.factory = APIRequestFactory()
-        self.url = reverse('library:api_book_add')
+        self.url = reverse('library:api_book_add', kwargs={'uid':self.user.id})
         self.view = views.book_create_view.as_view()
 
-    def test_GetAddBook(self):
+    def test_get_add_book(self):
         request = self.factory.get(self.url)
         response = self.view(request)
         print('\n' + request.build_absolute_uri())
@@ -129,23 +129,23 @@ class TestLibraryBookAdd(APITestCase):
                          'Expected Response Code 405, received {0} instead.'
                          .format(response.status_code))
 
-    def test_AddBook(self):
+    def test_add_book(self):
         request = self.factory.post(self.url, {"book_name": "test book",
                                                "book_author": "test author",
                                                "book_year": datetime.datetime.now(),
                                                "user": self.user.id}, format='json')
-        response = self.view(request)
+        response = self.view(request, uid = self.user.id)
         print('\n' + request.build_absolute_uri())
         self.assertEqual(response.status_code, 201,
                          'Expected Response Code 201, received {0} instead.'
                          .format(response.status_code))
 
-    def test_AddEmptyBook(self):
+    def test_add_empty_book(self):
         request = self.factory.post(self.url, {"book_name": "",
                                                "book_author": "test author",
                                                "book_year": datetime.datetime.now(),
                                                "user": self.user.id}, format='json')
-        response = self.view(request)
+        response = self.view(request, uid = self.user.id)
         print('\n' + request.build_absolute_uri())
         self.assertEqual(response.status_code, 400,
                          'Expected Response Code 400, received {0} instead.'
@@ -162,14 +162,15 @@ class TestLibraryBookDetail(APITestCase):
         self.factory = APIRequestFactory()
         self.view = views.book_detail_view.as_view()
 
-    def test_BookDetail(self):
-        self.url = reverse('library:api_book_detail', kwargs={'pk': self.book.id})
-        request = self.factory.get(self.url, pk=self.book.id)
+    def test_book_detail(self):
+        self.url = reverse('library:api_book_detail', kwargs={'uid': self.user.id, 'bid': 1})
+        request = self.factory.get(self.url, uid=self.user.id, bid = 1)
         print('\n' + request.build_absolute_uri())
-        response = self.view(request, pk=self.book.id)
+        response = self.view(request, uid=self.user.id, bid = 1)
         self.assertEqual(response.status_code, 200,
                          'Expected Response Code 200, received {0} instead.'
                          .format(response.status_code))
+
 
 class TestLibraryBookEdit(APITestCase):
     def setUp(self):
@@ -181,16 +182,16 @@ class TestLibraryBookEdit(APITestCase):
         self.factory = APIRequestFactory()
         self.view = views.book_edit_view.as_view()
 
-    def test_BookEdit(self):
-        self.url = reverse('library:api_book_edit', kwargs={'pk': self.book.id})
-        request = self.factory.put(self.url, data = {"book_name": "book1",
-                                                     "book_author": "author1",
-                                                     "book_year": "1212-12-21T00:00:00Z",}
-                                   , pk=self.book.id)
+    def test_book_edit(self):
+        self.url = reverse('library:api_book_edit', kwargs={'uid': self.user.id, 'bid': 1})
+        request = self.factory.put(self.url, data={"book_name": "book1",
+                                                   "book_author": "author1",
+                                                   "book_year": "1212-12-21T00:00:00Z", }
+                                   , bid=1, uid =self.user.id )
         print('\n' + request.build_absolute_uri())
-        response = self.view(request, pk=self.book.id)
-        self.assertEqual(response.status_code, 202,
-                         'Expected Response Code 202, received {0} instead.'
+        response = self.view(request, bid=1, uid = self.user.id)
+        self.assertEqual(response.status_code, 200,
+                         'Expected Response Code 200, received {0} instead.'
                          .format(response.status_code))
 
 
@@ -204,11 +205,11 @@ class TestLibraryBookDelete(APITestCase):
         self.factory = APIRequestFactory()
         self.view = views.book_delete_view.as_view()
 
-    def test_BookDelete(self):
-        self.url = reverse('library:api_book_delete', kwargs={'pk': self.book.id})
-        request = self.factory.post(self.url, pk=self.book.id)
+    def test_book_delete(self):
+        self.url = reverse('library:api_book_delete', kwargs={'uid': self.user.id, 'bid': 1})
+        request = self.factory.post(self.url, uid=self.user.id, bid=1)
         print('\n' + request.build_absolute_uri())
-        response = self.view(request, pk=self.book.id)
-        self.assertEqual(response.status_code, 202,
-                         'Expected Response Code 202, received {0} instead.'
+        response = self.view(request, uid = self.user.id, bid=1)
+        self.assertEqual(response.status_code, 200,
+                         'Expected Response Code 200, received {0} instead.'
                          .format(response.status_code))

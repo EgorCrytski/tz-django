@@ -1,6 +1,8 @@
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render
+from rest_framework.request import Request
+
 from .models import Book, User
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -76,8 +78,8 @@ class user_detail_view(APIView):
     serializer_class = UserDetailSerializer
     queryset = User.objects.all()
 
-    def get(self, request, pk):
-        user = User.objects.get(id=pk)
+    def get(self, request, uid):
+        user = User.objects.get(id=uid)
         serializer = UserDetailSerializer(user)
         return Response(serializer.data)
 
@@ -93,22 +95,22 @@ class user_create_view(APIView):
 
 
 class user_edit_view(APIView):
-    def put(self, request, pk):
-        user = User.objects.get(id=pk)
+    def put(self, request, uid):
+        user = User.objects.get(id=uid)
         serializer = UserEditSerializer(user, data=request.data)
 
         if serializer.is_valid():
             serializer.save()
-            return Response(status=202)
+            return Response(status=200)
         else:
             return Response(status=400)
 
 
 class user_delete_view(APIView):
-    def post(self, request, pk):
-        user = User.objects.get(id=pk)
+    def post(self, request, uid):
+        user = User.objects.get(id=uid)
         user.delete()
-        return Response(status=202)
+        return Response(status=200)
 
 
 class book_list_view(APIView):
@@ -125,36 +127,54 @@ class book_detail_view(APIView):
     serializer_class = BookDetailSerializer
     queryset = Book.objects.all()
 
-    def get(self, request, pk):
-        book = Book.objects.get(id=pk)
+    def get(self, request, uid, bid):
+        book = Book.objects.filter(user = uid)
+        book = book[bid-1]
         serializer = BookDetailSerializer(book)
         return Response(serializer.data)
 
 
 class book_create_view(APIView):
-    def post(self, request):
-        book = BookCreateSerializer(data=request.data)
+    serializer_class = BookCreateSerializer
+
+    def post(self, request, uid):
+        #request.POST['user'] = uid
+        #post_data = request.POST.copy()
+        #post_data.join['user'] = uid
+        #a = Request
+        #a.POST = post_data
+        #print(type(post_data))
+        #print('\n\n\n\n\n\n')
+        #print(a.POST)\
+        #user = User.objects.get(id=uid)
+        book = BookCreateSerializer(data=request.data,)
         if book.is_valid():
             book.save()
-            return Response(status=201)
+            return Response(status=200)
         else:
             return Response(status=400)
 
 
 class book_edit_view(APIView):
-    def put(self, request, pk):
-        book = Book.objects.get(id=pk)
+    def put(self, request, uid, bid):
+        book = Book.objects.filter(user=uid)
+        book = book[bid - 1]
         serializer = BookEditSerializer(book, data=request.data)
 
         if serializer.is_valid():
             serializer.save()
-            return Response(status=202)
+            return Response(status=200)
         else:
             return Response(status=400)
 
 
 class book_delete_view(APIView):
-    def post(self, request, pk):
-        book = Book.objects.get(id=pk)
-        book.delete()
-        return Response(status=202)
+    def post(self, request, uid, bid):
+        book = Book.objects.filter(user=uid)
+        if book.count() > 0:
+            print(book.count())
+            book = book[bid - 1]
+            book.delete()
+            return Response(status=200)
+        else:
+            return Response(status = 404)

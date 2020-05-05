@@ -33,10 +33,14 @@ class BookEditSerializer(serializers.ModelSerializer):
 
 
 class BookCreateSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
     class Meta:
         model = Book
         exclude = ("id",)
 
+    def get_user(self, obj):
+        return (obj.id)
 
 class BookListSerializer(serializers.ModelSerializer):
     class Meta:
