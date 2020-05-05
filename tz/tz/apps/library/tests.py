@@ -1,15 +1,15 @@
 from rest_framework.test import APIRequestFactory, APITestCase
 from rest_framework.reverse import reverse
 from .models import User, Book
-from . import apiviews
+from . import views
 import datetime
 
 
 class TestLibraryUserList(APITestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.url = reverse('api:user_list')
-        self.view = apiviews.UserListView.as_view()
+        self.url = reverse('library:api_user_list')
+        self.view =views.user_list_view.as_view()
 
     def test_GetUserList(self):
         request = self.factory.get(self.url)
@@ -23,8 +23,8 @@ class TestLibraryUserList(APITestCase):
 class TestLibraryUserAdd(APITestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.url = reverse('api:user_add')
-        self.view = apiviews.UserCreateView.as_view()
+        self.url = reverse('library:api_user_add')
+        self.view =views.user_create_view.as_view()
 
     def test_GetAddUser(self):
         request = self.factory.get(self.url)
@@ -55,10 +55,10 @@ class TestLibraryUserDetail(APITestCase):
     def setUp(self):
         self.user = User.objects.create(user_name='John')
         self.factory = APIRequestFactory()
-        self.view = apiviews.UserDetailView.as_view()
+        self.view =views.user_detail_view.as_view()
 
     def test_UserDetail(self):
-        self.url = reverse('api:user_detail', kwargs={'pk': self.user.id})
+        self.url = reverse('library:api_user_detail', kwargs={'pk': self.user.id})
         request = self.factory.get(self.url, pk=self.user.id)
         print('\n' + request.build_absolute_uri())
         response = self.view(request, pk=self.user.id)
@@ -71,10 +71,10 @@ class TestLibraryUserEdit(APITestCase):
     def setUp(self):
         self.user = User.objects.create(user_name='John')
         self.factory = APIRequestFactory()
-        self.view = apiviews.UserEditView.as_view()
+        self.view =views.user_edit_view.as_view()
 
     def test_UserEdit(self):
-        self.url = reverse('api:user_edit', kwargs={'pk': self.user.id})
+        self.url = reverse('library:api_user_edit', kwargs={'pk': self.user.id})
         request = self.factory.put(self.url, data={"user_name": "Mark"}, pk=self.user.id)
         print('\n' + request.build_absolute_uri())
         response = self.view(request, pk=self.user.id)
@@ -87,10 +87,10 @@ class TestLibraryUserDelete(APITestCase):
     def setUp(self):
         self.user = User.objects.create(user_name='John')
         self.factory = APIRequestFactory()
-        self.view = apiviews.UserDeleteView.as_view()
+        self.view =views.user_delete_view.as_view()
 
     def test_UserDelete(self):
-        self.url = reverse('api:user_delete', kwargs={'pk': self.user.id})
+        self.url = reverse('library:api_user_delete', kwargs={'pk': self.user.id})
         request = self.factory.post(self.url, pk=self.user.id)
         print('\n' + request.build_absolute_uri())
         response = self.view(request, pk=self.user.id)
@@ -102,8 +102,8 @@ class TestLibraryUserDelete(APITestCase):
 class TestLibraryBookList(APITestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.url = reverse('api:book_list')
-        self.view = apiviews.BookListView.as_view()
+        self.url = reverse('library:api_book_list')
+        self.view =views.book_list_view.as_view()
 
     def test_GetBookList(self):
         request = self.factory.get(self.url)
@@ -118,8 +118,8 @@ class TestLibraryBookAdd(APITestCase):
     def setUp(self):
         self.user = User.objects.create(user_name='John')
         self.factory = APIRequestFactory()
-        self.url = reverse('api:book_add')
-        self.view = apiviews.BookCreateView.as_view()
+        self.url = reverse('library:api_book_add')
+        self.view =views.book_create_view.as_view()
 
     def test_GetAddBook(self):
         request = self.factory.get(self.url)
@@ -160,10 +160,10 @@ class TestLibraryBookDetail(APITestCase):
                                         book_year=datetime.datetime.now(),
                                         user=self.user)
         self.factory = APIRequestFactory()
-        self.view = apiviews.BookDetailView.as_view()
+        self.view =views.book_detail_view.as_view()
 
     def test_BookDetail(self):
-        self.url = reverse('api:book_detail', kwargs={'pk': self.book.id})
+        self.url = reverse('library:api_book_detail', kwargs={'pk': self.book.id})
         request = self.factory.get(self.url, pk=self.book.id)
         print('\n' + request.build_absolute_uri())
         response = self.view(request, pk=self.book.id)
@@ -179,10 +179,10 @@ class TestLibraryBookEdit(APITestCase):
                                         book_year=datetime.datetime.now(),
                                         user=self.user)
         self.factory = APIRequestFactory()
-        self.view = apiviews.BookEditView.as_view()
+        self.view =views.book_edit_view.as_view()
 
     def test_BookEdit(self):
-        self.url = reverse('api:book_edit', kwargs={'pk': self.book.id})
+        self.url = reverse('library:api_book_edit', kwargs={'pk': self.book.id})
         request = self.factory.put(self.url, data = {"book_name": "book1",
                                                      "book_author": "author1",
                                                      "book_year": "1212-12-21T00:00:00Z",}
@@ -202,10 +202,10 @@ class TestLibraryBookDelete(APITestCase):
                                         book_year=datetime.datetime.now(),
                                         user=self.user)
         self.factory = APIRequestFactory()
-        self.view = apiviews.BookDeleteView.as_view()
+        self.view =views.book_delete_view.as_view()
 
     def test_BookDelete(self):
-        self.url = reverse('api:book_delete', kwargs={'pk': self.book.id})
+        self.url = reverse('library:api_book_delete', kwargs={'pk': self.book.id})
         request = self.factory.post(self.url, pk=self.book.id)
         print('\n' + request.build_absolute_uri())
         response = self.view(request, pk=self.book.id)
