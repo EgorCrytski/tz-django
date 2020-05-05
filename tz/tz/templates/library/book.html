@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Book {{book.book_name}}{% endblock %}
+
+{% block content %}
+  <b>Book name: {{book.book_name}}</b><br>
+  <b>Book author: {{book.book_author}}</b><br>
+  <b>Publishing date: {{book.book_year}}</b><br>
+
+  <form action="{% url 'library:change_book' book.id %}" method ="POST">
+    {% csrf_token %}
+    <input type="text" required placeholder="Name" name = "book_name"><br>
+    <input type="text" required placeholder="Author" name = "book_author"><br>
+    <input type="date" required placeholder="Date" name = "book_year"><br>
+    <button type="submit">Change book description</button><br>
+  </form>
+  <form action="{% url 'library:delete_book' book.id %}" method ="POST">
+    {% csrf_token %}
+    <button type="submit">Delete book</button>
+  </form>
+{% endblock %}

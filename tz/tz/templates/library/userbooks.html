@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}{{user.user_name}} books{% endblock %}
+
+{% block content %}
+  {% if books %}
+    {% for a in books %}
+      <a href="{% url 'library:book' a.id %}">{{a.book_name}}<br></a>
+    {% endfor %}
+  {% else %}
+    No books found
+  {% endif %}
+    <form action="{% url 'library:add_book' %}" method ="POST">
+
+        {% csrf_token %}
+
+        <input type="text" required placeholder="Book name" name = "book_name"><br>
+        <input type="text" required placeholder="Book author" name = "book_author"><br>
+        <input type="date" required placeholder="Publication date" name = "book_year"><br>
+        <input type="hidden" value={{user.id}} name = "userid"><br>
+        <button type="submit">New book</button>
+  </form>
+{% endblock %}
