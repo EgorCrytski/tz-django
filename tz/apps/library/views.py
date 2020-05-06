@@ -1,13 +1,15 @@
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render
-from rest_framework.request import Request
-
+from rest_framework import permissions
+#from .permissions import IsOwner
 from .models import Book, User
+from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import UserDetailSerializer, UserListSerializer, BookDetailSerializer, BookListSerializer, \
     BookCreateSerializer, UserCreateSerializer, UserEditSerializer, BookEditSerializer
+
 
 def index(request):
     users_list = User.objects.order_by('user_name')
@@ -61,12 +63,10 @@ def delete_book(request, book_id):
     return HttpResponseRedirect(reverse('library:user_books', args=(user.id,)))
 
 
-
-
-
-class user_list_view(APIView):
+class UserListView(APIView):
     serializer_class = UserListSerializer
     queryset = User.objects.all()
+    permission_classes = [permissions.IsAdminUser]
 
     def get(self, request):
         users = User.objects.all()
@@ -74,17 +74,39 @@ class user_list_view(APIView):
         return Response(serializer.data)
 
 
-class user_detail_view(APIView):
+class UserDetailView(APIView):
     serializer_class = UserDetailSerializer
     queryset = User.objects.all()
 
+    permission_classes = [permissions.IsAdminUser]
+
     def get(self, request, uid):
-        user = User.objects.get(id=uid)
-        serializer = UserDetailSerializer(user)
-        return Response(serializer.data)
+        try:
+            user = User.objects.get(id=uid)
+            serializer = UserDetailSerializer(user)
+            return Response(serializer.data)
+
+        except:
+            return Response(status=404)
 
 
-class user_create_view(APIView):
+class SelfUserDetailView(APIView):
+    serializer_class = UserDetailSerializer
+    queryset = User.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        try:
+            user = User.objects.get(id=request.user.id)
+            serializer = UserDetailSerializer(user)
+            return Response(serializer.data)
+        except:
+            return Response(status=404)
+
+
+class UserCreateView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
     def post(self, request):
         user = UserCreateSerializer(data=request.data)
         if user.is_valid():
@@ -94,7 +116,9 @@ class user_create_view(APIView):
             return Response(status=400)
 
 
-class user_edit_view(APIView):
+class UserEditView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
     def put(self, request, uid):
         user = User.objects.get(id=uid)
         serializer = UserEditSerializer(user, data=request.data)
@@ -106,16 +130,19 @@ class user_edit_view(APIView):
             return Response(status=400)
 
 
-class user_delete_view(APIView):
+class UserDeleteView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
     def post(self, request, uid):
         user = User.objects.get(id=uid)
         user.delete()
         return Response(status=200)
 
 
-class book_list_view(APIView):
+class BookListView(APIView):
     serializer_class = BookListSerializer
     queryset = Book.objects.all()
+    permission_classes = [permissions.IsAdminUser]
 
     def get(self, request):
         books = Book.objects.all()
@@ -123,39 +150,56 @@ class book_list_view(APIView):
         return Response(serializer.data)
 
 
-class book_detail_view(APIView):
+class BookDetailView(APIView):
     serializer_class = BookDetailSerializer
     queryset = Book.objects.all()
+    permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, uid, bid):
-        book = Book.objects.filter(user = uid)
-        book = book[bid-1]
-        serializer = BookDetailSerializer(book)
-        return Response(serializer.data)
+        try:
+            book = Book.objects.filter(user=uid)
+            book = book[bid - 1]
+            serializer = BookDetailSerializer(book)
+            return Response(serializer.data)
+        except:
+            return Response(status=404)
 
 
-class book_create_view(APIView):
+class BookCreateView(APIView):
     serializer_class = BookCreateSerializer
+    permission_classes = [permissions.IsAdminUser]
 
-    def post(self, request, uid):
-        #request.POST['user'] = uid
-        #post_data = request.POST.copy()
-        #post_data.join['user'] = uid
-        #a = Request
-        #a.POST = post_data
-        #print(type(post_data))
-        #print('\n\n\n\n\n\n')
-        #print(a.POST)\
-        #user = User.objects.get(id=uid)
-        book = BookCreateSerializer(data=request.data,)
+    def post(self, request):
+
+        book = BookCreateSerializer(data=request.data, )
         if book.is_valid():
             book.save()
-            return Response(status=200)
+            return Response(status=201)
+        else:
+            return Response(status=400)
+
+class SelfBookCreateView(APIView):
+    serializer_class = BookCreateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        data = request.data.copy()
+        print('\n\n\n\n\n\n\n\n')
+        data['user'] = request.user.id
+        print(request.data)
+        print(data)
+        print('\n\n\n\n\n\n\n\n')
+        book = BookCreateSerializer(data=data, )
+        if book.is_valid():
+            book.save()
+            return Response(status=201)
         else:
             return Response(status=400)
 
 
-class book_edit_view(APIView):
+class BookEditView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
     def put(self, request, uid, bid):
         book = Book.objects.filter(user=uid)
         book = book[bid - 1]
@@ -168,7 +212,8 @@ class book_edit_view(APIView):
             return Response(status=400)
 
 
-class book_delete_view(APIView):
+class BookDeleteView(APIView):
+    permission_classes = [permissions.IsAdminUser]
     def post(self, request, uid, bid):
         book = Book.objects.filter(user=uid)
         if book.count() > 0:
@@ -177,4 +222,4 @@ class book_delete_view(APIView):
             book.delete()
             return Response(status=200)
         else:
-            return Response(status = 404)
+            return Response(status=404)

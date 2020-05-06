@@ -1,17 +1,17 @@
 from rest_framework import serializers
-from .models import User, Book
-
+from .models import Book
+from django.contrib.auth.models import User
 
 class UserEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("user_name",)
+        fields = ("username",)
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("user_name",)
+        fields = ("username",)
 
 
 class UserListSerializer(serializers.ModelSerializer):
@@ -33,14 +33,12 @@ class BookEditSerializer(serializers.ModelSerializer):
 
 
 class BookCreateSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Book
         exclude = ("id",)
 
-    def get_user(self, obj):
-        return (obj.id)
 
 class BookListSerializer(serializers.ModelSerializer):
     class Meta:
