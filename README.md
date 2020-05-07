@@ -30,7 +30,7 @@
   > Добавить новую книгу себе
 * '/token/'
   > Получить токен
-* '/toke/refresh/'
+* '/token/refresh/'
   > Обновить токен
 * 'token/verify/'
   
