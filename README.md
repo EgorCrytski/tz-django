@@ -4,8 +4,10 @@
 * 'host:port/api/v1/library'
 
 ### api paths:
-* '/user/\<int\>/detail/'
+* '/user/\<int\>/'
   > Просмотр юзера
+* '/user/\me/'
+  > Просмотр информации о себе
 * '/user/\<int\>/edit/'
   > Изменение юзера
 * '/user/\<int\>/delete/'
@@ -14,16 +16,25 @@
   > Список всех юзеров
 * '/user/add'
   > Добавляет нового юзера
-* '/book/\<int\>/detail'
-  > Просомтр книги
-* '/book/\<int\>/edit'
-  > Изменение книги
-* '/book/\<int\>/delete'
-  > Удаление книги
+* '/user/\<int\>/book/\<int\>/detail'
+  > Просмотр книги пользователя
+* '/user/\<int\>/book/\<int\>/edit'
+  > Изменение книги пользователя
+* '/user/\<int\>/book/\<int\>/delete'
+  > Удаление книги пользователя
 * '/book/all'
   > Список всех книг
 * '/book/add'
   > Добавляет новую книгу
+* '/book/add/myself'
+  > Добавить новую книгу себе
+* '/token/'
+  > Получить токен
+* '/toke/refresh/'
+  > Обновить токен
+* 'token/verify/'
+  
+
 ## library app
 ### library app root path:
 * 'host:port/library'
