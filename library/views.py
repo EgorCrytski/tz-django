@@ -2,17 +2,19 @@ from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render
 from rest_framework import permissions
-#from .permissions import IsOwner
+# from .permissions import IsOwner
 from .models import Book, User
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
+from django.conf.urls import url
+from rest_framework_swagger.views import get_swagger_view
 from rest_framework.response import Response
 from .serializers import UserDetailSerializer, UserListSerializer, BookDetailSerializer, BookListSerializer, \
     BookCreateSerializer, UserCreateSerializer, UserEditSerializer, BookEditSerializer
 
 
 def index(request):
-    users_list = User.objects.order_by('user_name')
+    users_list = User.objects.order_by('username')
     return render(request, 'library/list.html', {'users_list': users_list})
 
 
@@ -73,8 +75,12 @@ class UserListView(APIView):
         serializer = UserListSerializer(users, many=True)
         return Response(serializer.data)
 
+    def get_serializer(self):
+        return UserListSerializer()
+
 
 class UserDetailView(APIView):
+    '''Просмотр информации о пользователе'''
     serializer_class = UserDetailSerializer
     queryset = User.objects.all()
 
@@ -89,8 +95,12 @@ class UserDetailView(APIView):
         except:
             return Response(status=404)
 
+    def get_serializer(self):
+        return UserDetailSerializer()
+
 
 class SelfUserDetailView(APIView):
+    '''Просмотр информации о текущем авторизованном пользователе'''
     serializer_class = UserDetailSerializer
     queryset = User.objects.all()
     permission_classes = [permissions.IsAuthenticated]
@@ -103,8 +113,12 @@ class SelfUserDetailView(APIView):
         except:
             return Response(status=404)
 
+    def get_serializer(self):
+        return UserDetailSerializer()
+
 
 class UserCreateView(APIView):
+    '''Создать нового пользователя'''
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request):
@@ -115,8 +129,12 @@ class UserCreateView(APIView):
         else:
             return Response(status=400)
 
+    def get_serializer(self):
+        return UserCreateSerializer()
+
 
 class UserEditView(APIView):
+    '''Редактировать пользователя'''
     permission_classes = [permissions.IsAdminUser]
 
     def put(self, request, uid):
@@ -129,8 +147,12 @@ class UserEditView(APIView):
         else:
             return Response(status=400)
 
+    def get_serializer(self):
+        return UserEditSerializer()
+
 
 class UserDeleteView(APIView):
+    '''Удалить пользователя'''
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request, uid):
@@ -139,7 +161,9 @@ class UserDeleteView(APIView):
         return Response(status=200)
 
 
+
 class BookListView(APIView):
+    '''Список всех книг'''
     serializer_class = BookListSerializer
     queryset = Book.objects.all()
     permission_classes = [permissions.IsAdminUser]
@@ -149,8 +173,12 @@ class BookListView(APIView):
         serializer = BookListSerializer(books, many=True)
         return Response(serializer.data)
 
+    def get_serializer(self):
+        return BookListSerializer()
+
 
 class BookDetailView(APIView):
+    '''Подробная информация о книге'''
     serializer_class = BookDetailSerializer
     queryset = Book.objects.all()
     permission_classes = [permissions.IsAdminUser]
@@ -164,8 +192,12 @@ class BookDetailView(APIView):
         except:
             return Response(status=404)
 
+    def get_serializer(self):
+        return BookDetailSerializer()
+
 
 class BookCreateView(APIView):
+    '''Создать новую книгу'''
     serializer_class = BookCreateSerializer
     permission_classes = [permissions.IsAdminUser]
 
@@ -178,7 +210,12 @@ class BookCreateView(APIView):
         else:
             return Response(status=400)
 
+    def get_serializer(self):
+        return BookCreateSerializer()
+
+
 class SelfBookCreateView(APIView):
+    '''Создать новую книгу для текущего авторизованного пользователя'''
     serializer_class = BookCreateSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -196,10 +233,13 @@ class SelfBookCreateView(APIView):
         else:
             return Response(status=400)
 
+    def get_serializer(self):
+        return BookCreateSerializer()
+
 
 class BookEditView(APIView):
     permission_classes = [permissions.IsAdminUser]
-
+    '''Редактировать книгу'''
     def put(self, request, uid, bid):
         book = Book.objects.filter(user=uid)
         book = book[bid - 1]
@@ -211,9 +251,14 @@ class BookEditView(APIView):
         else:
             return Response(status=400)
 
+    def get_serializer(self):
+        return BookEditSerializer()
+
 
 class BookDeleteView(APIView):
+    '''Удалить книгу'''
     permission_classes = [permissions.IsAdminUser]
+
     def post(self, request, uid, bid):
         book = Book.objects.filter(user=uid)
         if book.count() > 0:
@@ -223,3 +268,4 @@ class BookDeleteView(APIView):
             return Response(status=200)
         else:
             return Response(status=404)
+
