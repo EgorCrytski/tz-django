@@ -12,12 +12,14 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os, sys
 
+DEBUG = False
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from datetime import timedelta
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(__file__)
-#sys.path.insert(0, os.path.join(PROJECT_ROOT, 'apps'))
+# sys.path.insert(0, os.path.join(PROJECT_ROOT, 'apps'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -26,7 +28,6 @@ PROJECT_ROOT = os.path.dirname(__file__)
 SECRET_KEY = '538e49l7o@wxi4n-_mrw6lx_afmmoh3c38b20@pd%ibz)k2sqk'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -39,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'rest_framework_swagger',
     'rest_framework',
     'rest_framework.authtoken',
     'library.apps.LibraryConfig',
@@ -72,24 +72,14 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
-        'libraries': {
-            'staticfiles' : 'django.templatetags.static',
-        }
+            'libraries': {
+                'staticfiles': 'django.templatetags.static',
+            }
         },
     },
 ]
 
 WSGI_APPLICATION = 'tz.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#    }
-# }
 
 DATABASES = {
     'default': {
@@ -141,7 +131,6 @@ STATIC_URL = '/static/'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        # 'rest_framework.authentication.TokenAuthentication'
     ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_MODEL_SERIALIZER_CLASS': (
@@ -155,8 +144,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=60),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',
@@ -164,7 +153,7 @@ SIMPLE_JWT = {
     'VERIFYLINK_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
-    'AUTH_HEADER_TYPES': ('JWT',),
+    'AUTH_HEADER_TYPES': ('',),
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
@@ -172,10 +161,9 @@ SIMPLE_JWT = {
     'JTI_CLAIM': 'jti',
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(minutes=60),
 
 }
-
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
