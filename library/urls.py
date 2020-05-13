@@ -1,12 +1,8 @@
-from django.urls import path, include
-#from rest_framework_swagger.views import get_swagger_view
-
+from django.urls import path
 
 from . import views
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView, TokenVerifyView)
-#from django.conf.urls import url
 
-#schema_view = get_swagger_view(title='Library API')
 
 app_name = 'library'
 
@@ -14,7 +10,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('library/user/<int:user_id>/', views.user_books, name='user_books'),
     path('library/user/add/', views.add_user, name='add_user'),
-    #path('api/v1/schema', schema_view),
 
     path('library/book/<int:book_id>/', views.book, name='book'),
     path('library/book/add/', views.add_book, name='add_book'),
