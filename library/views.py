@@ -1,8 +1,7 @@
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import permissions
-# from .permissions import IsOwner
 from .models import Book, User
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
@@ -19,21 +18,15 @@ def index(request):
 
 
 def user_books(request, user_id):
-    try:
-        user = User.objects.get(id=user_id)
-        book_list = Book.objects.filter(user_id=user_id)
-    except:
-        raise Http404("User not found")
+    user = get_object_or_404(User, id=user_id)
+    book_list = Book.objects.filter(user_id=user_id)
 
     return render(request, 'library/userbooks.html', {'books': book_list, 'user': user})
 
 
 def book(request, book_id):
-    try:
-        book = Book.objects.get(id=book_id)
-    except:
-        raise Http404("Book not found")
 
+    book = get_object_or_404(Book, id = book_id)
     return render(request, 'library/book.html', {'book': book})
 
 
@@ -60,7 +53,7 @@ def change_book(request, book_id):
 
 
 def delete_book(request, book_id):
-    user = (Book.objects.get(id=book_id)).user
+    user = (get_object_or_404(Book, id = book_id)).user
     Book.objects.filter(id=book_id).delete()
     return HttpResponseRedirect(reverse('library:user_books', args=(user.id,)))
 
@@ -87,13 +80,10 @@ class UserDetailView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, uid):
-        try:
-            user = User.objects.get(id=uid)
-            serializer = UserDetailSerializer(user)
-            return Response(serializer.data)
+        user = get_object_or_404(User, id=uid)
+        serializer = UserDetailSerializer(user)
+        return Response(serializer.data)
 
-        except:
-            return Response(status=404)
 
     def get_serializer(self):
         return UserDetailSerializer()
@@ -106,12 +96,10 @@ class SelfUserDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        try:
-            user = User.objects.get(id=request.user.id)
-            serializer = UserDetailSerializer(user)
-            return Response(serializer.data)
-        except:
-            return Response(status=404)
+        user = get_object_or_404(User, id = request.user.id)
+        serializer = UserDetailSerializer(user)
+        return Response(serializer.data)
+
 
     def get_serializer(self):
         return UserDetailSerializer()
@@ -138,7 +126,7 @@ class UserEditView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def put(self, request, uid):
-        user = User.objects.get(id=uid)
+        user = get_object_or_404(User, id = uid)
         serializer = UserEditSerializer(user, data=request.data)
 
         if serializer.is_valid():
@@ -156,7 +144,7 @@ class UserDeleteView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request, uid):
-        user = User.objects.get(id=uid)
+        user = get_object_or_404(User, id = uid)
         user.delete()
         return Response(status=200)
 
@@ -262,7 +250,6 @@ class BookDeleteView(APIView):
     def post(self, request, uid, bid):
         book = Book.objects.filter(user=uid)
         if book.count() > 0:
-            print(book.count())
             book = book[bid - 1]
             book.delete()
             return Response(status=200)
