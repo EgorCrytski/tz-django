@@ -12,7 +12,6 @@ class Helper(APITestCase):
             request = self.factory.get(self.url, uid=user.id)
         if force == True:
             force_authenticate(request, user=user)
-        # print(request.build_absolute_uri())
         if kwargs == False:
             response = self.view(request)
         else:

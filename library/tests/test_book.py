@@ -97,7 +97,6 @@ class TestLibraryBookEdit(APITestCase):
                                                    "book_author": "author1",
                                                    "book_year": "1212-12-21T00:00:00Z", }
                                    , bid=1, uid=self.user.id)
-        print('\n' + request.build_absolute_uri())
         force_authenticate(request, user=user, token=user)
         response = self.view(request, bid=1, uid=self.user.id)
         self.assertEqual(response.status_code, 200,
