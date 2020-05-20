@@ -103,15 +103,16 @@ class TestLibraryUserEdit(APITestCase):
 
 class TestLibraryUserDelete(APITestCase):
     def setUp(self):
-        self.user = User.objects.create(username='John')
+        self.user = User.objects.create_superuser(username='Admin')
+        user = User.objects.create(username="John")
+        user.save()
         self.factory = APIRequestFactory()
         self.view = views.UserDeleteView.as_view()
-        self.url = reverse('library:api_user_delete', kwargs={'uid': self.user.id})
+        self.url = reverse('library:api_user_delete', kwargs={'uid': user.id})
 
     def test_user_delete(self):
-        user = User
-        request = self.factory.post(self.url, uid=user.id)
-        force_authenticate(request, user=user, token=user)
+        request = self.factory.post(self.url, uid=self.user.id)
+        force_authenticate(request, user=self.user, token=self.user)
         response = self.view(request, uid=self.user.id)
         self.assertEqual(response.status_code, 200,
                          'Expected Response Code 200, received {0} instead.'

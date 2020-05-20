@@ -5,83 +5,79 @@ from ..models import User, Book
 from .. import views
 
 
+class Helper(APITestCase):
+    def get_helper(self, force, code, kwargs=False, user=User):
+        if kwargs == False:
+            request = self.factory.get(self.url)
+        else:
+            request = self.factory.get(self.url, uid=self.user.id, bid=1)
+        if force == True:
+            force_authenticate(request, user=user)
+        if kwargs == False:
+            response = self.view(request)
+        else:
+            response = self.view(request, uid=self.user.id, bid=1)
+        self.assertEqual(response.status_code, code,
+                         'Expected Response Code {0}, received {1} instead.'
+                         .format(code, response.status_code))
+
+    def post_helper(self, data, force, code, user=User):
+        request = self.factory.post(self.url, data, format='json')
+        if force == True:
+            force_authenticate(request, user=user)
+        response = self.view(request)
+        self.assertEqual(response.status_code, code,
+                         'Expected Response Code {0}, received {1} instead.'
+                         .format(code, response.status_code))
+
 
 class TestLibraryBookList(APITestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
         self.url = reverse('library:api_book_list')
         self.view = views.BookListView.as_view()
+        self.user = User.objects.create_superuser(username='Admin')
 
     def test_get_book_list(self):
-        user = User
-        request = self.factory.get(self.url)
-        force_authenticate(request, user=user, token=user.auth_token)
-        response = self.view(request)
-        self.assertEqual(response.status_code, 200,
-                         'Expected Response Code 200, received {0} instead.'
-                         .format(response.status_code))
+        Helper.get_helper(self, force=True, code=200, user=self.user)
 
 
 class TestLibraryBookAdd(APITestCase):
     def setUp(self):
-        self.user = User.objects.create(username='John')
+        self.user = User.objects.create_superuser(username='Admin')
         self.factory = APIRequestFactory()
         self.url = reverse('library:api_book_add', )
         self.view = views.BookCreateView.as_view()
 
     def test_get_add_book(self):
-        user = User
-        request = self.factory.get(self.url)
-        force_authenticate(request, user=user, token=user)
-        response = self.view(request)
-        self.assertEqual(response.status_code, 405,
-                         'Expected Response Code 405, received {0} instead.'
-                         .format(response.status_code))
+        Helper.get_helper(self, force=True, code=405, user=self.user)
 
     def test_add_book(self):
-        user = User
-        request = self.factory.post(self.url, {"book_name": "test book",
-                                               "book_author": "test author",
-                                               "book_year": datetime.now(),
-                                               "user": self.user.id}, format='json')
-        force_authenticate(request, user=user, token=user)
-        response = self.view(request)
-        self.assertEqual(response.status_code, 201,
-                         'Expected Response Code 201, received {0} instead.'
-                         .format(response.status_code))
+        Helper.post_helper(self, {"book_name": "test book",
+                                  "book_author": "test author",
+                                  "book_year": datetime.now(),
+                                  "user": self.user.id}, force=True, code=201, user=self.user)
 
     def test_add_empty_book(self):
-        user = User
-        request = self.factory.post(self.url, {"book_name": "",
-                                               "book_author": "test author",
-                                               "book_year": datetime.now(),
-                                               "user": self.user.id}, format='json')
-        force_authenticate(request, user=user, token=user)
-        response = self.view(request)
-        self.assertEqual(response.status_code, 400,
-                         'Expected Response Code 400, received {0} instead.'
-                         .format(response.status_code))
+        Helper.post_helper(self, {"book_name": "",
+                                  "book_author": "test author",
+                                  "book_year": datetime.now(),
+                                  "user": self.user.id}, force=True, code=400, user=self.user)
 
 
 class TestLibraryBookDetail(APITestCase):
     def setUp(self):
-        self.user = User.objects.create(username='John')
+        self.user = User.objects.create_superuser(username='Admin')
         self.book = Book.objects.create(book_name="Book",
                                         book_author="Author",
                                         book_year=datetime.now(),
                                         user=self.user)
         self.factory = APIRequestFactory()
         self.view = views.BookDetailView.as_view()
+        self.url = reverse('library:api_book_detail', kwargs={'uid': self.user.id, 'bid': 1})
 
     def test_book_detail(self):
-        user = User
-        self.url = reverse('library:api_book_detail', kwargs={'uid': self.user.id, 'bid': 1})
-        request = self.factory.get(self.url, uid=self.user.id, bid=1)
-        force_authenticate(request, user=user, token=user)
-        response = self.view(request, uid=self.user.id, bid=1)
-        self.assertEqual(response.status_code, 200,
-                         'Expected Response Code 200, received {0} instead.'
-                         .format(response.status_code))
+        Helper.get_helper(self, force=True, code=200, kwargs=True, user=self.user)
 
 
 class TestLibraryBookEdit(APITestCase):
