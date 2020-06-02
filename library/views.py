@@ -11,53 +11,6 @@ from rest_framework.response import Response
 from .serializers import UserDetailSerializer, UserListSerializer, BookDetailSerializer, BookListSerializer, \
     BookCreateSerializer, UserCreateSerializer, UserEditSerializer, BookEditSerializer
 
-
-def index(request):
-    users_list = User.objects.order_by('username')
-    return render(request, 'library/list.html', {'users_list': users_list})
-
-
-def user_books(request, user_id):
-    user = get_object_or_404(User, id=user_id)
-    book_list = Book.objects.filter(user_id=user_id)
-
-    return render(request, 'library/userbooks.html', {'books': book_list, 'user': user})
-
-
-def book(request, book_id):
-
-    book = get_object_or_404(Book, id = book_id)
-    return render(request, 'library/book.html', {'book': book})
-
-
-def add_user(request):
-    a = User(user_name=request.POST['name'])
-    a.save()
-    return HttpResponseRedirect(reverse('library:index'))
-
-
-def add_book(request):
-    user = User.objects.get(id=request.POST['userid'])
-    a = Book(book_name=request.POST['book_name'], book_author=request.POST['book_author'],
-             book_year=request.POST['book_year'], user=user)
-    a.save()
-    return HttpResponseRedirect(reverse('library:user_books', args=(user.id,)))
-
-
-def change_book(request, book_id):
-    Book.objects.filter(id=book_id).update(book_name=request.POST['book_name'],
-                                           book_author=request.POST['book_author'],
-                                           book_year=request.POST['book_year'])
-
-    return HttpResponseRedirect(reverse('library:book', args=(book_id,)))
-
-
-def delete_book(request, book_id):
-    user = (get_object_or_404(Book, id = book_id)).user
-    Book.objects.filter(id=book_id).delete()
-    return HttpResponseRedirect(reverse('library:user_books', args=(user.id,)))
-
-
 class UserListView(APIView):
     serializer_class = UserListSerializer
     queryset = User.objects.all()
@@ -172,13 +125,9 @@ class BookDetailView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, uid, bid):
-        try:
-            book = Book.objects.filter(user=uid)
-            book = book[bid - 1]
-            serializer = BookDetailSerializer(book)
-            return Response(serializer.data)
-        except:
-            return Response(status=404)
+        book = get_object_or_404(Book, user=uid, id = bid)
+        serializer = BookDetailSerializer(book)
+        return Response(serializer.data)
 
     def get_serializer(self):
         return BookDetailSerializer()

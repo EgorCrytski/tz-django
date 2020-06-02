@@ -7,15 +7,6 @@ from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshVie
 app_name = 'library'
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('library/user/<int:user_id>/', views.user_books, name='user_books'),
-    path('library/user/add/', views.add_user, name='add_user'),
-
-    path('library/book/<int:book_id>/', views.book, name='book'),
-    path('library/book/add/', views.add_book, name='add_book'),
-    path('library/book/<int:book_id>/change/', views.change_book, name='change_book'),
-    path('library/book/<int:book_id>/delete/', views.delete_book, name='delete_book'),
-
     path('api/v1/library/user/add/', views.UserCreateView.as_view(), name='api_user_add'),
     path('api/v1/library/user/<int:uid>/', views.UserDetailView.as_view(), name='api_user_detail'),
     path('api/v1/library/user/me/', views.SelfUserDetailView().as_view(), name='api_self_user_detail'),
