@@ -178,10 +178,8 @@ class BookEditView(APIView):
     permission_classes = [permissions.IsAdminUser]
     '''Редактировать книгу'''
     def put(self, request, uid, bid):
-        book = Book.objects.filter(user=uid)
-        book = book[bid - 1]
+        book = get_object_or_404(Book, user=uid, id = bid)
         serializer = BookEditSerializer(book, data=request.data)
-
         if serializer.is_valid():
             serializer.save()
             return Response(status=200)
@@ -197,11 +195,7 @@ class BookDeleteView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request, uid, bid):
-        book = Book.objects.filter(user=uid)
-        if book.count() > 0:
-            book = book[bid - 1]
-            book.delete()
-            return Response(status=200)
-        else:
-            return Response(status=404)
+        book = get_object_or_404(Book, user=uid, id = bid)
+        book.delete()
+        return Response(status=200)
 
