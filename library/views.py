@@ -23,6 +23,7 @@ class UserListView(APIView):
 
     def get_serializer(self):
         return UserListSerializer()
+        
 
 
 class UserDetailView(APIView):
