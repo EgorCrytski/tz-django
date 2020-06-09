@@ -1,0 +1,45 @@
+version: "3.8"
+services:
+
+  db:
+    image: postgres:latest
+    ports:
+      - 127.0.0.1:5433:5432
+    env_file:
+      - common.env
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+
+  api:
+    restart: always
+    links:
+      - db:db
+    env_file:
+      - common.env
+    build:
+      context: tz-django
+    command: > 
+        bash -c "python tz-django/manage.py migrate
+        && python tz-django/manage.py initadmin
+        && python tz-django/manage.py runserver 0.0.0.0:8000"
+        
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  web:
+    build:
+      context: bootstrap-front
+    ports:
+     - "8080:80"
+    volumes:
+      - ./src:/usr/share/nginx/html
+    depends_on:
+      - api
+    links:
+      - api
+         
